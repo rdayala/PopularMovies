@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivityFragment">
+
+    <!-- Grid View to hold the movie posters
+        numColumns="auto_fit" - to Display as many columns as possible to fill the available space.
+        horizontalSpacing="0dp" - we don't want space between posters
+        android:verticalSpacing="0dp" - we don't want any vertical space between posters
+    -->
+
+    <GridView
+        android:id="@+id/movie_posters_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:horizontalSpacing="0dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="0dp" />
+
+</FrameLayout>

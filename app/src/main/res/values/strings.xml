@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+
+
+
+    <!-- API key to be used with themoviedb.org API -->
+    <string name="api_key">xxxxxxxxxxxxxx</string>
+
+    <string name="poster_dimen">w185</string>
+
+    <!-- Menu String for Popular Movies -->
+    <string name="popular_movies">Popular Movies</string>
+
+    <!-- Menu String for High rated Movies -->
+    <string name="high_rated">High Rated Movies</string>
+    <string name="title_activity_movie_details">MovieDetails</string>
+
+    <string name="popular_movies_chocie">popularity.desc</string>
+    <string name="high_rated_movies_choice">vote_average.desc</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
