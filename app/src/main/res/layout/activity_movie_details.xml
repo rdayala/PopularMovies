@@ -14,6 +14,7 @@
             android:layout_height="100dp"
             android:background="#009688"
             android:gravity="center_vertical"
+            android:fontFamily="sans-serif-light"
             android:paddingLeft="20dp"
             android:textColor="@android:color/white"
             android:textSize="32sp" />
@@ -29,17 +30,20 @@
                 android:layout_height="185dp" />
 
             <TextView
-                android:id="@+id/movie_title2"
+                android:id="@+id/movie_release_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="32sp"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="bold"
                 android:layout_toRightOf="@id/movie_poster_image" />
 
             <TextView
                 android:id="@+id/movie_vote_average"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/movie_title2"
-                android:layout_marginLeft="10dp"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:layout_below="@id/movie_release_date"
                 android:layout_toRightOf="@id/movie_poster_image" />
 
         </RelativeLayout>

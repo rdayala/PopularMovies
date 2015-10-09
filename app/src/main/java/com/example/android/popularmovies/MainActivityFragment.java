@@ -115,10 +115,12 @@ public class MainActivityFragment extends Fragment {
                 Intent movieDetailIntent = new Intent(getActivity().getApplicationContext(), MovieDetailsActivity.class);
                 MovieDataItem item = mGridData.get(position);
                 // passing array index
+                movieDetailIntent.putExtra("movie_id", item.getMovieId());
                 movieDetailIntent.putExtra("movie_poster_url", item.getMoviePosterPathUrl());
                 movieDetailIntent.putExtra("movie_original_title", item.getOriginalTitle());
                 movieDetailIntent.putExtra("movie_overview", item.getOverview());
                 movieDetailIntent.putExtra("movie_vote_average", item.getVote_average());
+                movieDetailIntent.putExtra("movie_release_date", item.getReleaseDate());
                 startActivity(movieDetailIntent);
             }
         });
