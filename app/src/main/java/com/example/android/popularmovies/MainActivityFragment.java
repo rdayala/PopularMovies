@@ -46,6 +46,13 @@ public class MainActivityFragment extends Fragment {
 
 
     public MainActivityFragment() {
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
     }
 
@@ -110,7 +117,6 @@ public class MainActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                // Sending image id to FullScreenActivity
 
                 Intent movieDetailIntent = new Intent(getActivity().getApplicationContext(), MovieDetailsActivity.class);
                 MovieDataItem item = mGridData.get(position);
