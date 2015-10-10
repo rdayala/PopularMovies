@@ -37,12 +37,13 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
-    private enum MOVIES_TYPE {POPULAR, HIGH_RATED }; // future, we can add more
 
     private GridView mGridView;
     private GridViewAdapter mGridAdapter;
     private ArrayList<MovieDataItem> mGridData;
     private String sortChoice;
+    private boolean isFragmentNew = true;
+    private String movieJsonData;
 
 
     public MainActivityFragment() {
@@ -52,7 +53,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Add this line in order for this fragment to handle menu events.
+        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -95,7 +96,25 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart () {
         super.onStart();
-        fetchMoviesAndUpdateView();
+        // if the fragment is newly created, fetch and show data
+        if(isFragmentNew) {
+            fetchMoviesAndUpdateView();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // The activity has become visible (it is now "resumed").
+        if(!isFragmentNew) {
+            try {
+                updateUI(getMovieDataFromJson(movieJsonData));
+
+            }catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -131,53 +150,69 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+        if(savedInstanceState != null) {
+            isFragmentNew = false;
+        }
+
         return rootView;
     }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, Object[]> {
-
-
-        /**
-         * Take the String representing the complete data in JSON Format and
-         * pull out the data we need to construct the Strings needed for the wireframes.
-         *
-         * Fortunately parsing is easy:  constructor takes the JSON string and converts it
-         * into an Object hierarchy for us.
-         */
-        private Object[] getMovieDataFromJson(String moviesJsonStr)
-                throws JSONException {
-
-            JSONObject moviesJson = new JSONObject(moviesJsonStr);
-            JSONArray moviesArray = moviesJson.getJSONArray("results");
-
-            List<MovieDataItem> movieItems = new ArrayList<MovieDataItem>();
-            for(int i = 0; i < moviesArray.length(); i++) {
-
-                // Get the JSON object representing the movie
-                JSONObject movieInfo = moviesArray.getJSONObject(i);
-
-                String movieId = movieInfo.getString("id");
-                String imageUrl = movieInfo.getString("poster_path");
-                String originalTitle = movieInfo.getString("original_title");
-                String movieOverview = movieInfo.getString("overview");
-                String vote_average = movieInfo.getString("vote_average");
-                String releaseDate = movieInfo.getString("release_date");
-                String origLanguage = movieInfo.getString("original_language");
-
-                MovieDataItem item = new MovieDataItem();
-                item.setMoviePosterPath(imageUrl);
-                item.setOriginalTitle(originalTitle);
-                item.setOverview(movieOverview);
-                item.setVote_average(vote_average);
-                item.setReleaseDate(releaseDate);
-                item.setOrigLanguage(origLanguage);
-
-                movieItems.add(item);
+    public void updateUI(Object[] movieItems) {
+        // Download complete. Let us update UI
+        MovieDataItem item;
+        if (movieItems != null) {
+            mGridAdapter.clear();
+            for(Object movieItem : movieItems)
+            {   item = (MovieDataItem)movieItem;
+                mGridData.add(item);
             }
-
-            return movieItems.toArray();
-
+            mGridAdapter.setGridData(mGridData);
         }
+    }
+
+    /**
+     * Take the String representing the complete data in JSON Format and
+     * pull out the data we need to construct the Strings needed for the wireframes.
+     *
+     * Fortunately parsing is easy:  constructor takes the JSON string and converts it
+     * into an Object hierarchy for us.
+     */
+    private Object[] getMovieDataFromJson(String moviesJsonStr)
+            throws JSONException {
+
+        JSONObject moviesJson = new JSONObject(moviesJsonStr);
+        JSONArray moviesArray = moviesJson.getJSONArray("results");
+
+        List<MovieDataItem> movieItems = new ArrayList<MovieDataItem>();
+        for(int i = 0; i < moviesArray.length(); i++) {
+
+            // Get the JSON object representing the movie
+            JSONObject movieInfo = moviesArray.getJSONObject(i);
+
+            String movieId = movieInfo.getString("id");
+            String imageUrl = movieInfo.getString("poster_path");
+            String originalTitle = movieInfo.getString("original_title");
+            String movieOverview = movieInfo.getString("overview");
+            String vote_average = movieInfo.getString("vote_average");
+            String releaseDate = movieInfo.getString("release_date");
+            String origLanguage = movieInfo.getString("original_language");
+
+            MovieDataItem item = new MovieDataItem();
+            item.setMoviePosterPath(imageUrl);
+            item.setOriginalTitle(originalTitle);
+            item.setOverview(movieOverview);
+            item.setVote_average(vote_average);
+            item.setReleaseDate(releaseDate);
+            item.setOrigLanguage(origLanguage);
+
+            movieItems.add(item);
+        }
+
+        return movieItems.toArray();
+
+    }
+
+    public class FetchMoviesTask extends AsyncTask<String, Void, Object[]> {
 
         @Override
         protected Object[] doInBackground(String... params) {
@@ -185,9 +220,6 @@ public class MainActivityFragment extends Fragment {
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String moviesJsonStr = null;
 
             try {
                 // Construct the URL for the themoviedb query
@@ -232,8 +264,8 @@ public class MainActivityFragment extends Fragment {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                moviesJsonStr = buffer.toString();
-                Log.v(LOG_TAG, "Popular Movies JSON string: " + moviesJsonStr);
+                movieJsonData = buffer.toString();
+                Log.v(LOG_TAG, "Popular Movies JSON string: " + movieJsonData);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -254,7 +286,7 @@ public class MainActivityFragment extends Fragment {
             }
 
             try {
-                return getMovieDataFromJson(moviesJsonStr);
+                return getMovieDataFromJson(movieJsonData);
 
             }catch (JSONException e)
             {
@@ -266,16 +298,7 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Object[] movieItems) {
-            // Download complete. Let us update UI
-            MovieDataItem item;
-            if (movieItems != null) {
-                mGridAdapter.clear();
-                for(Object movieItem : movieItems)
-                {   item = (MovieDataItem)movieItem;
-                    mGridData.add(item);
-                }
-                mGridAdapter.setGridData(mGridData);
-            }
+            updateUI(movieItems);
         }
     }
 }
