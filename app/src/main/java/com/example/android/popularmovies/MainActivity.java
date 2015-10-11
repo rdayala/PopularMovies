@@ -1,5 +1,8 @@
 package com.example.android.popularmovies;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -14,10 +17,18 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movies_parent_group, new MainActivityFragment())
-                    .commit();
+            // If network connection is available
+            if (isNetworkAvailable()) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.movies_parent_group, new MainActivityFragment())
+                        .commit();
+            } else {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.movies_parent_group, new NetworkStatusFragment())
+                        .commit();
+            }
         }
     }
 
@@ -41,6 +52,21 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void checkNetworkAction() {
+        if(isNetworkAvailable()) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movies_parent_group, new MainActivityFragment())
+                    .commit();
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }

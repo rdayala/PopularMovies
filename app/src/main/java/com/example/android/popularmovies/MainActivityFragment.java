@@ -85,38 +85,6 @@ public class MainActivityFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void fetchMoviesAndUpdateView() {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        if((sortChoice == null) || (sortChoice == "")) {
-            sortChoice = getString(R.string.popular_movies_chocie);
-        }
-        fetchMoviesTask.execute(getString(R.string.api_key), sortChoice);
-    }
-
-    @Override
-    public void onStart () {
-        super.onStart();
-        // if the fragment is newly created, fetch and show data
-        if(isFragmentNew) {
-            fetchMoviesAndUpdateView();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // The activity has become visible (it is now "resumed").
-        if(!isFragmentNew) {
-            try {
-                updateUI(getMovieDataFromJson(movieJsonData));
-
-            }catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -155,6 +123,46 @@ public class MainActivityFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onStart () {
+        Log.v(LOG_TAG, "onStart called!");
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        Log.v(LOG_TAG, "onResume called!");
+        super.onResume();
+        // The activity has become visible (it is now "resumed").
+        if(!isFragmentNew) {
+            try {
+                updateUI(getMovieDataFromJson(movieJsonData));
+
+            }catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else {
+            fetchMoviesAndUpdateView();
+        }
+    }
+
+    private void fetchMoviesAndUpdateView() {
+        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
+        if((sortChoice == null) || (sortChoice == "")) {
+            sortChoice = getString(R.string.popular_movies_chocie);
+        }
+        fetchMoviesTask.execute(getString(R.string.api_key), sortChoice);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v(LOG_TAG, "onSaveInstanceState called!");
+        super.onSaveInstanceState(outState);
+        isFragmentNew = false;
     }
 
     public void updateUI(Object[] movieItems) {
