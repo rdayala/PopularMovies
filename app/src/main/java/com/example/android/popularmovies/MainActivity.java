@@ -54,7 +54,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void checkNetworkAction() {
+    public void checkNetworkUpdateView() {
         if(isNetworkAvailable()) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movies_parent_group, new MainActivityFragment())
@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private boolean isNetworkAvailable() {
+    public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();

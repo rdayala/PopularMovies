@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,12 +74,25 @@ public class MainActivityFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popular_movies) {
             sortChoice = getString(R.string.popular_movies_chocie);
-            fetchMoviesAndUpdateView();
+            if(((MainActivity)getActivity()).isNetworkAvailable()) {
+                fetchMoviesAndUpdateView();
+            }
+            else {
+                Toast toast = Toast.makeText(getActivity(), "Network connection is not available", Toast.LENGTH_LONG);
+                toast.show();
+            }
             return true;
         }
         else if(id == R.id.action_high_rated) {
             sortChoice = getString(R.string.high_rated_movies_choice);
-            fetchMoviesAndUpdateView();
+            if(((MainActivity)getActivity()).isNetworkAvailable()) {
+                fetchMoviesAndUpdateView();
+            }
+            else
+            {
+                Toast toast = Toast.makeText(getActivity(), "Network connection is not available", Toast.LENGTH_LONG);
+                toast.show();
+            }
             return true;
         }
 

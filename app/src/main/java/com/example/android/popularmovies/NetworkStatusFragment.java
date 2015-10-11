@@ -23,7 +23,7 @@ public class NetworkStatusFragment extends Fragment {
         rootView.findViewById(R.id.network_connection_retry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).checkNetworkAction();
+                ((MainActivity)getActivity()).checkNetworkUpdateView();
             }
         });
 
