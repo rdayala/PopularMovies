@@ -176,7 +176,7 @@ public class MainActivityFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         Log.v(LOG_TAG, "onSaveInstanceState called!");
         super.onSaveInstanceState(outState);
-        isFragmentNew = false;
+        isFragmentNew = false; // saving the state, the fragment is already created
     }
 
     public void updateUI(Object[] movieItems) {
