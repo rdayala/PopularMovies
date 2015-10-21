@@ -1,61 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/movie_details_group"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-    <LinearLayout
+    <fragment
+        android:id="@+id/movieDetailsFragment"
+        class="com.example.android.popularmovies.MovieDetailsFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent" />
 
-        <TextView
-            android:id="@+id/movie_title"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="#009688"
-            android:gravity="center_vertical"
-            android:fontFamily="sans-serif-light"
-            android:paddingLeft="20dp"
-            android:textColor="@android:color/white"
-            android:textAppearance="?android:textAppearanceLarge" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp">
-
-            <ImageView
-                android:id="@+id/movie_poster_image"
-                android:layout_width="185dp"
-                android:layout_height="185dp" />
-
-            <TextView
-                android:id="@+id/movie_release_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="32sp"
-                android:fontFamily="sans-serif-light"
-                android:textStyle="bold"
-                android:layout_toRightOf="@id/movie_poster_image" />
-
-            <TextView
-                android:id="@+id/movie_vote_average"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:layout_below="@id/movie_release_date"
-                android:layout_toRightOf="@id/movie_poster_image" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/movie_overview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-</ScrollView>
+</FrameLayout>

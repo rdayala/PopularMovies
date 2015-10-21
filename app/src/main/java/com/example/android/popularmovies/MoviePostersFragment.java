@@ -63,17 +63,14 @@ public class MoviePostersFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        String sortChoice = null;
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popular_movies) {
-            sortChoice = getString(R.string.popular_movies_chocie);
-            fetchMoviesAndUpdateView(sortChoice);
+            fetchMoviesAndUpdateView(getString(R.string.popular_movies_chocie));
             return true;
         }
         else if(id == R.id.action_high_rated) {
-            sortChoice = getString(R.string.high_rated_movies_choice);
-            fetchMoviesAndUpdateView(sortChoice);
+            fetchMoviesAndUpdateView(getString(R.string.high_rated_movies_choice));
             return true;
         }
 
@@ -99,18 +96,27 @@ public class MoviePostersFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
+                Fragment movieDetailsFragment = getActivity().getSupportFragmentManager()
+                        .findFragmentById(R.id.movieDetailsFragment);
 
-                Intent movieDetailIntent = new Intent(getActivity().getApplicationContext(), MovieDetailsActivity.class);
-                // passing array index
-                MovieDataItem item = mGridData.get(position);
+                if (movieDetailsFragment != null && movieDetailsFragment.isVisible()) {
+                    // passing array index
+                    MovieDataItem item = mGridData.get(position);
+                    ((MoviesFragmentCoordinator)getActivity()).onMoviePosterSelected(item);
+                }
+                else {
+                    Intent movieDetailIntent = new Intent(getActivity().getApplicationContext(), MovieDetailsActivity.class);
+                    // passing array index
+                    MovieDataItem item = mGridData.get(position);
 
-                movieDetailIntent.putExtra("movie_id", item.getMovieId());
-                movieDetailIntent.putExtra("movie_poster_url", item.getMoviePosterPathUrl());
-                movieDetailIntent.putExtra("movie_original_title", item.getOriginalTitle());
-                movieDetailIntent.putExtra("movie_overview", item.getOverview());
-                movieDetailIntent.putExtra("movie_vote_average", item.getVote_average());
-                movieDetailIntent.putExtra("movie_release_date", item.getReleaseDate());
-                startActivity(movieDetailIntent);
+                    movieDetailIntent.putExtra("movie_id", item.getMovieId());
+                    movieDetailIntent.putExtra("movie_poster_url", item.getMoviePosterPathUrl());
+                    movieDetailIntent.putExtra("movie_original_title", item.getOriginalTitle());
+                    movieDetailIntent.putExtra("movie_overview", item.getOverview());
+                    movieDetailIntent.putExtra("movie_vote_average", item.getVote_average());
+                    movieDetailIntent.putExtra("movie_release_date", item.getReleaseDate());
+                    startActivity(movieDetailIntent);
+                }
             }
         });
 
@@ -130,7 +136,7 @@ public class MoviePostersFragment extends Fragment {
             // the fragment already exists from previous state
             // just update the UI, don't fetch data
             try {
-                updateUI(getMovieDataFromJson(moviesJsonData));
+                updateMoviePostersFragment(getMovieDataFromJson(moviesJsonData));
 
             }catch (JSONException e)
             {
@@ -140,20 +146,32 @@ public class MoviePostersFragment extends Fragment {
         else {
             // the fragment is visible for the first time
             // fetch the data and update the view
+            // on App launch, by default show popular movies
             fetchMoviesAndUpdateView(getString(R.string.popular_movies_chocie));
         }
     }
 
-    public void updateUI(Object[] movieItems) {
+    public void updateMoviePostersFragment(Object[] movieItems) {
         // Download complete. Let us update UI
-        MovieDataItem item;
         if (movieItems != null) {
             mGridAdapter.clear();
             for(Object movieItem : movieItems)
-            {   item = (MovieDataItem)movieItem;
+            {   MovieDataItem item = (MovieDataItem)movieItem;
                 mGridData.add(item);
             }
             mGridAdapter.setGridData(mGridData);
+
+            Fragment movieDetailsFragment = getActivity().getSupportFragmentManager()
+                    .findFragmentById(R.id.movieDetailsFragment);
+
+            // if the orientation is landscape and movie details fragment
+            // is available and visible, show the details
+            // on App launch, by default show the first movie details
+            if (movieDetailsFragment != null && movieDetailsFragment.isInLayout()) {
+                // passing array index
+                MovieDataItem item = mGridData.get(0);
+                ((MoviesFragmentCoordinator)getActivity()).onMoviePosterSelected(item);
+            }
         }
     }
 
@@ -300,7 +318,7 @@ public class MoviePostersFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Object[] movieItems) {
-            updateUI(movieItems);
+            updateMoviePostersFragment(movieItems);
         }
     }
 }
