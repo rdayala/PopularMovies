@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,30 +30,24 @@ import java.util.List;
 
 
 /**
- * A placeholder fragment containing a simple view.
  * This Fragment class is used to fetch the movie posters.
  *
  */
-public class MainActivityFragment extends Fragment {
+public class MoviePostersFragment extends Fragment {
 
-    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private static final String LOG_TAG = MoviePostersFragment.class.getSimpleName();
 
     private GridView mGridView;
     private GridViewAdapter mGridAdapter;
     private ArrayList<MovieDataItem> mGridData;
-    private String sortChoice;
-    private boolean isFragmentNew = true;
-    private String movieJsonData;
 
+    private String moviesJsonData;
 
-    public MainActivityFragment() {
-
-    }
+    public MoviePostersFragment() {    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -70,29 +63,17 @@ public class MainActivityFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        String sortChoice = null;
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popular_movies) {
             sortChoice = getString(R.string.popular_movies_chocie);
-            if(((MainActivity)getActivity()).isNetworkAvailable()) {
-                fetchMoviesAndUpdateView();
-            }
-            else {
-                Toast toast = Toast.makeText(getActivity(), "Network connection is not available", Toast.LENGTH_LONG);
-                toast.show();
-            }
+            fetchMoviesAndUpdateView(sortChoice);
             return true;
         }
         else if(id == R.id.action_high_rated) {
             sortChoice = getString(R.string.high_rated_movies_choice);
-            if(((MainActivity)getActivity()).isNetworkAvailable()) {
-                fetchMoviesAndUpdateView();
-            }
-            else
-            {
-                Toast toast = Toast.makeText(getActivity(), "Network connection is not available", Toast.LENGTH_LONG);
-                toast.show();
-            }
+            fetchMoviesAndUpdateView(sortChoice);
             return true;
         }
 
@@ -102,7 +83,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.movie_posters_fragment, container, false);
         mGridView = (GridView)rootView.findViewById(R.id.movie_posters_grid);
 
         //Initialize with empty data
@@ -120,8 +101,9 @@ public class MainActivityFragment extends Fragment {
 
 
                 Intent movieDetailIntent = new Intent(getActivity().getApplicationContext(), MovieDetailsActivity.class);
-                MovieDataItem item = mGridData.get(position);
                 // passing array index
+                MovieDataItem item = mGridData.get(position);
+
                 movieDetailIntent.putExtra("movie_id", item.getMovieId());
                 movieDetailIntent.putExtra("movie_poster_url", item.getMoviePosterPathUrl());
                 movieDetailIntent.putExtra("movie_original_title", item.getOriginalTitle());
@@ -133,26 +115,22 @@ public class MainActivityFragment extends Fragment {
         });
 
         if(savedInstanceState != null) {
-            isFragmentNew = false;
+            moviesJsonData = savedInstanceState.getString("moviesJsonData");
         }
 
         return rootView;
     }
 
     @Override
-    public void onStart () {
-        Log.v(LOG_TAG, "onStart called!");
-        super.onStart();
-    }
-
-    @Override
     public void onResume() {
-        Log.v(LOG_TAG, "onResume called!");
-        super.onResume();
         // The activity has become visible (it is now "resumed").
-        if(!isFragmentNew) {
+        super.onResume();
+
+        if(moviesJsonData != null) {
+            // the fragment already exists from previous state
+            // just update the UI, don't fetch data
             try {
-                updateUI(getMovieDataFromJson(movieJsonData));
+                updateUI(getMovieDataFromJson(moviesJsonData));
 
             }catch (JSONException e)
             {
@@ -160,23 +138,10 @@ public class MainActivityFragment extends Fragment {
             }
         }
         else {
-            fetchMoviesAndUpdateView();
+            // the fragment is visible for the first time
+            // fetch the data and update the view
+            fetchMoviesAndUpdateView(getString(R.string.popular_movies_chocie));
         }
-    }
-
-    private void fetchMoviesAndUpdateView() {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        if((sortChoice == null) || (sortChoice == "")) {
-            sortChoice = getString(R.string.popular_movies_chocie);
-        }
-        fetchMoviesTask.execute(getString(R.string.api_key), sortChoice);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.v(LOG_TAG, "onSaveInstanceState called!");
-        super.onSaveInstanceState(outState);
-        isFragmentNew = false; // saving the state, the fragment is already created
     }
 
     public void updateUI(Object[] movieItems) {
@@ -234,7 +199,22 @@ public class MainActivityFragment extends Fragment {
 
     }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, Object[]> {
+    private void fetchMoviesAndUpdateView(String sortChoice) {
+        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
+        if((sortChoice == null) || (sortChoice == "")) {
+            sortChoice = getString(R.string.popular_movies_chocie);
+        }
+        fetchMoviesTask.execute(getString(R.string.api_key), sortChoice);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v(LOG_TAG, "onSaveInstanceState called!");
+        super.onSaveInstanceState(outState);
+        outState.putString("moviesJsonData", moviesJsonData);
+    }
+
+    private class FetchMoviesTask extends AsyncTask<String, Void, Object[]> {
 
         @Override
         protected Object[] doInBackground(String... params) {
@@ -286,8 +266,8 @@ public class MainActivityFragment extends Fragment {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                movieJsonData = buffer.toString();
-                Log.v(LOG_TAG, "Popular Movies JSON string: " + movieJsonData);
+                moviesJsonData = buffer.toString();
+                Log.v(LOG_TAG, "Popular Movies JSON string: " + moviesJsonData);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -308,7 +288,7 @@ public class MainActivityFragment extends Fragment {
             }
 
             try {
-                return getMovieDataFromJson(movieJsonData);
+                return getMovieDataFromJson(moviesJsonData);
 
             }catch (JSONException e)
             {
