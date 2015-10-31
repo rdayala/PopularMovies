@@ -1,24 +1,27 @@
 <resources>
+    <!-- App name Label -->
     <string name="app_name">Popular Movies</string>
 
-
-
-    <!-- API key to be used with themoviedb.org API -->
-    <string name="api_key">xxxxxxxxxxxxxx</string>
-
-    <string name="poster_dimen">w185</string>
-
-    <!-- Menu String for Popular Movies -->
-    <string name="popular_movies">Popular Movies</string>
-
-    <!-- Menu String for High rated Movies -->
-    <string name="high_rated">High Rated Movies</string>
+    <!-- Movie Details Activity name -->
     <string name="title_activity_movie_details">MovieDetails</string>
 
-    <string name="popular_movies_chocie">popularity.desc</string>
-    <string name="high_rated_movies_choice">vote_average.desc</string>
+    <!-- Menu Label for Popular Movies -->
+    <string name="popular_movies">Popular Movies</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <!-- Menu Label for High rated Movies -->
+    <string name="high_rated">High Rated Movies</string>
+
+    <string name="popular_movies_chocie" translatable="false">popularity.desc</string>
+    <string name="high_rated_movies_choice" translatable="false">vote_average.desc</string>
+
+    <!-- Movie Data Item details -->
+    <string name="movie_id" translatable="false">movie_id</string>
+    <string name="movie_poster_url" translatable="false">movie_poster_url</string>
+    <string name="movie_original_title" translatable="false">movie_original_title</string>
+    <string name="movie_overview" translatable="false">movie_overview</string>
+    <string name="movie_vote_average" translatable="false">movie_vote_average</string>
+    <string name="movie_release_date" translatable="false">movie_release_date</string>
+
+    <string name="movie_saved_json_data" translatable="false">moviesJsonData</string>
 
 </resources>

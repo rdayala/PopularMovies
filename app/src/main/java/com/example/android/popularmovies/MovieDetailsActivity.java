@@ -15,11 +15,11 @@ public class MovieDetailsActivity extends ActionBarActivity {
         Intent detailIntent = getIntent();
 
         MovieDataItem movieDataItem = new MovieDataItem();
-        movieDataItem.setMoviePosterPath(detailIntent.getExtras().getString("movie_poster_url"));
-        movieDataItem.setOriginalTitle(detailIntent.getExtras().getString("movie_original_title"));
-        movieDataItem.setOverview(detailIntent.getExtras().getString("movie_overview"));
-        movieDataItem.setVote_average(detailIntent.getExtras().getString("movie_vote_average"));
-        movieDataItem.setReleaseDate(detailIntent.getExtras().getString("movie_release_date"));
+        movieDataItem.setMoviePosterPath(detailIntent.getExtras().getString(getString(R.string.movie_poster_url)));
+        movieDataItem.setOriginalTitle(detailIntent.getExtras().getString(getString(R.string.movie_original_title)));
+        movieDataItem.setOverview(detailIntent.getExtras().getString(getString(R.string.movie_overview)));
+        movieDataItem.setVote_average(detailIntent.getExtras().getString(getString(R.string.movie_vote_average)));
+        movieDataItem.setReleaseDate(detailIntent.getExtras().getString(getString(R.string.movie_release_date)));
 
         MovieDetailsFragment movieDetailsFragment =
                 (MovieDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.movieDetailsFragment);

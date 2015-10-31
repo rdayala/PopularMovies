@@ -30,7 +30,7 @@ import java.util.List;
 
 
 /**
- * This Fragment class is used to fetch the movie posters.
+ * This Fragment class is used to fetch the movie posters
  *
  */
 public class MoviePostersFragment extends Fragment {
@@ -48,6 +48,7 @@ public class MoviePostersFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
     }
 
@@ -80,48 +81,52 @@ public class MoviePostersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.movie_posters_fragment, container, false);
-        mGridView = (GridView)rootView.findViewById(R.id.movie_posters_grid);
 
         //Initialize with empty data
         mGridData = new ArrayList<>();
-        mGridAdapter = new GridViewAdapter(getActivity(), R.layout.movie_poster_grid_item, mGridData);
+
+        // The Adapter will take data from a source and
+        // use it to populate the GridView it's attached to.
+        mGridAdapter = new GridViewAdapter(
+                            getActivity(), // The current context (this activity)
+                            R.layout.movie_poster_grid_item, // The name of the layout ID.
+                            mGridData); // The data to represent in the GridView
+
+        View rootView = inflater.inflate(R.layout.movie_posters_fragment, container, false);
+
+        // Get a reference to the GridView, and attach this adapter to it.
+        mGridView = (GridView)rootView.findViewById(R.id.movie_posters_grid);
         mGridView.setAdapter(mGridAdapter);
 
-        /**
-         * On Click event for Single Gridview Item
-         * */
+        // On Click event for Gridview Item
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
 
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Fragment movieDetailsFragment = getActivity().getSupportFragmentManager()
                         .findFragmentById(R.id.movieDetailsFragment);
 
+                // passing array index
+                MovieDataItem item = mGridData.get(position);
+
                 if (movieDetailsFragment != null && movieDetailsFragment.isVisible()) {
-                    // passing array index
-                    MovieDataItem item = mGridData.get(position);
                     ((MoviesFragmentCoordinator)getActivity()).onMoviePosterSelected(item);
                 }
                 else {
-                    Intent movieDetailIntent = new Intent(getActivity().getApplicationContext(), MovieDetailsActivity.class);
-                    // passing array index
-                    MovieDataItem item = mGridData.get(position);
-
-                    movieDetailIntent.putExtra("movie_id", item.getMovieId());
-                    movieDetailIntent.putExtra("movie_poster_url", item.getMoviePosterPathUrl());
-                    movieDetailIntent.putExtra("movie_original_title", item.getOriginalTitle());
-                    movieDetailIntent.putExtra("movie_overview", item.getOverview());
-                    movieDetailIntent.putExtra("movie_vote_average", item.getVote_average());
-                    movieDetailIntent.putExtra("movie_release_date", item.getReleaseDate());
+                    Intent movieDetailIntent = new Intent(getActivity(), MovieDetailsActivity.class);
+                    movieDetailIntent.putExtra(getString(R.string.movie_id), item.getMovieId());
+                    movieDetailIntent.putExtra(getString(R.string.movie_poster_url), item.getMoviePosterPathUrl());
+                    movieDetailIntent.putExtra(getString(R.string.movie_original_title), item.getOriginalTitle());
+                    movieDetailIntent.putExtra(getString(R.string.movie_overview), item.getOverview());
+                    movieDetailIntent.putExtra(getString(R.string.movie_vote_average), item.getVote_average());
+                    movieDetailIntent.putExtra(getString(R.string.movie_release_date), item.getReleaseDate());
                     startActivity(movieDetailIntent);
                 }
             }
         });
 
         if(savedInstanceState != null) {
-            moviesJsonData = savedInstanceState.getString("moviesJsonData");
+            moviesJsonData = savedInstanceState.getString(getString(R.string.movie_saved_json_data));
         }
 
         return rootView;
@@ -168,7 +173,7 @@ public class MoviePostersFragment extends Fragment {
             // is available and visible, show the details
             // on App launch, by default show the first movie details
             if (movieDetailsFragment != null && movieDetailsFragment.isInLayout()) {
-                // passing array index
+                // during initial launch, show the first item detail
                 MovieDataItem item = mGridData.get(0);
                 ((MoviesFragmentCoordinator)getActivity()).onMoviePosterSelected(item);
             }
@@ -185,8 +190,18 @@ public class MoviePostersFragment extends Fragment {
     private Object[] getMovieDataFromJson(String moviesJsonStr)
             throws JSONException {
 
+        // These are the names of the JSON objects that need to be extracted.
+        final String MDB_RESULTS = "results";
+        final String MDB_MOVIE_ID = "id";
+        final String MDB_MOVIE_POSTER_PATH = "poster_path";
+        final String MDB_MOVIE_ORIGINAL_TITLE = "original_title";
+        final String MDB_MOVIE_OVERVIEW = "overview";
+        final String MDB_MOVIE_VOTE_AVERAGE = "vote_average";
+        final String MDB_MOVIE_RELEASE_DATE = "release_date";
+        final String MDB_MOVIE_ORIG_LANG = "original_language";
+
         JSONObject moviesJson = new JSONObject(moviesJsonStr);
-        JSONArray moviesArray = moviesJson.getJSONArray("results");
+        JSONArray moviesArray = moviesJson.getJSONArray(MDB_RESULTS);
 
         List<MovieDataItem> movieItems = new ArrayList<MovieDataItem>();
         for(int i = 0; i < moviesArray.length(); i++) {
@@ -194,13 +209,13 @@ public class MoviePostersFragment extends Fragment {
             // Get the JSON object representing the movie
             JSONObject movieInfo = moviesArray.getJSONObject(i);
 
-            String movieId = movieInfo.getString("id");
-            String imageUrl = movieInfo.getString("poster_path");
-            String originalTitle = movieInfo.getString("original_title");
-            String movieOverview = movieInfo.getString("overview");
-            String vote_average = movieInfo.getString("vote_average");
-            String releaseDate = movieInfo.getString("release_date");
-            String origLanguage = movieInfo.getString("original_language");
+            String movieId = movieInfo.getString(MDB_MOVIE_ID);
+            String imageUrl = movieInfo.getString(MDB_MOVIE_POSTER_PATH);
+            String originalTitle = movieInfo.getString(MDB_MOVIE_ORIGINAL_TITLE);
+            String movieOverview = movieInfo.getString(MDB_MOVIE_OVERVIEW);
+            String vote_average = movieInfo.getString(MDB_MOVIE_VOTE_AVERAGE);
+            String releaseDate = movieInfo.getString(MDB_MOVIE_RELEASE_DATE);
+            String origLanguage = movieInfo.getString(MDB_MOVIE_ORIG_LANG);
 
             MovieDataItem item = new MovieDataItem();
             item.setMoviePosterPath(imageUrl);
@@ -222,14 +237,13 @@ public class MoviePostersFragment extends Fragment {
         if((sortChoice == null) || (sortChoice == "")) {
             sortChoice = getString(R.string.popular_movies_chocie);
         }
-        fetchMoviesTask.execute(getString(R.string.api_key), sortChoice);
+        fetchMoviesTask.execute(sortChoice);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.v(LOG_TAG, "onSaveInstanceState called!");
         super.onSaveInstanceState(outState);
-        outState.putString("moviesJsonData", moviesJsonData);
+        outState.putString(getString(R.string.movie_saved_json_data), moviesJsonData);
     }
 
     private class FetchMoviesTask extends AsyncTask<String, Void, Object[]> {
@@ -247,15 +261,14 @@ public class MoviePostersFragment extends Fragment {
                 final String MOVIES_BASE_URL ="http://api.themoviedb.org/3/discover/movie?";
                 final String SORT_PARAM = "sort_by";
                 final String API_KEY_PARAM = "api_key";
-                String apiKey = params[0];
-                String sortChoice = params[1];
+                final String API_KEY = "XXXXXXXXXXXXXXXXXXXXXXXX"; // API key to be used with themoviedb.org APIs
+                String sortChoice = params[0];
 
                 Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                         .appendQueryParameter(SORT_PARAM, sortChoice)
-                        .appendQueryParameter(API_KEY_PARAM, apiKey)
+                        .appendQueryParameter(API_KEY_PARAM, API_KEY)
                         .build();
 
-                Log.v(LOG_TAG, builtUri.toString());
                 URL url = new URL(builtUri.toString());
 
                 // Create the request to themoviedb.org API, and open the connection
@@ -285,7 +298,6 @@ public class MoviePostersFragment extends Fragment {
                     return null;
                 }
                 moviesJsonData = buffer.toString();
-                Log.v(LOG_TAG, "Popular Movies JSON string: " + moviesJsonData);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -310,9 +322,11 @@ public class MoviePostersFragment extends Fragment {
 
             }catch (JSONException e)
             {
+                Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
 
+            // This will only happen if there was an error getting or parsing the movie data.
             return null;
         }
 

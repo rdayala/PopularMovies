@@ -19,13 +19,6 @@ public class MovieDataItem {
 
     }
 
-    // Constructor to initialize minimum data for a Movie
-    public MovieDataItem(String movieId, String moviePosterPath, String originalTitle) {
-        this.movieId = movieId;
-        this.moviePosterPath = moviePosterPath;
-        this.originalTitle = originalTitle;
-    }
-
     public String getMovieId() {
         return movieId;
     }

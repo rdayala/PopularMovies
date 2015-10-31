@@ -23,6 +23,8 @@ public class MovieDetailsFragment extends Fragment{
     }
 
     public void showMovieDetails(MovieDataItem movieDataItem) {
+        final String fullVotes = "10";
+
         TextView textViewTitle = (TextView)getActivity().findViewById(R.id.movie_title);
         textViewTitle.setText(movieDataItem.getOriginalTitle());
 
@@ -33,7 +35,7 @@ public class MovieDetailsFragment extends Fragment{
         textViewReleaseDate.setText(getMovieReleaseYear(movieDataItem.getReleaseDate()));
 
         TextView textViewVoteAverage = (TextView)getActivity().findViewById(R.id.movie_vote_average);
-        textViewVoteAverage.setText(movieDataItem.getVote_average() + "/10");
+        textViewVoteAverage.setText(movieDataItem.getVote_average() + "/" +  fullVotes);
 
         TextView textViewOverview = (TextView)getActivity().findViewById(R.id.movie_overview);
         textViewOverview.setText(movieDataItem.getOverview());
