@@ -9,6 +9,7 @@
         android:id="@+id/moviePostersFragment"
         class="com.example.android.popularmovies.MoviePostersFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout="@layout/movie_posters_fragment" />
 
 </FrameLayout>

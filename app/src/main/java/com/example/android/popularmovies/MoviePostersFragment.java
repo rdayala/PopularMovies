@@ -261,7 +261,7 @@ public class MoviePostersFragment extends Fragment {
                 final String MOVIES_BASE_URL ="http://api.themoviedb.org/3/discover/movie?";
                 final String SORT_PARAM = "sort_by";
                 final String API_KEY_PARAM = "api_key";
-                final String API_KEY = "XXXXXXXXXXXXXXXXXXXXXXXX"; // API key to be used with themoviedb.org APIs
+                final String API_KEY = "4fc4948432f9880dbcc0e7ca5cbc2d68";
                 String sortChoice = params[0];
 
                 Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()

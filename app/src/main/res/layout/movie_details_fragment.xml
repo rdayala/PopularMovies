@@ -61,6 +61,18 @@
             android:layout_margin="@dimen/movie_item_detail_margin"
             android:textSize="@dimen/movie_item_normal_text_size" />
 
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Trailers"
+            android:layout_margin="@dimen/movie_item_detail_margin"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/movie_trailer_label"/>
+
+        <VideoView android:id="@+id/videoView"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
     </LinearLayout>
 
 </ScrollView>
